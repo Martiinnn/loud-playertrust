@@ -70,7 +70,7 @@ function Log(message)
     local embedData = {{
         ['title'] = title,
         ['footer'] = {
-            ['text'] = "Loud RP | " .. os.date("%d/%m/%Y %X %p"),
+            ['text'] = "Loud | " .. os.date("%d/%m/%Y %X %p"),
             ['icon_url'] = "https://cdn.discordapp.com/attachments/1138360597256355911/1141890710879080488/88127058.png"
         },
         ['description'] = message,
