@@ -1,4 +1,4 @@
-local apiKey = "51BD89D66BE66F911F7CB5EA09C9D3ED"
+local apiKey = ""
 local daysThreshold = 15
 
 AddEventHandler('playerConnecting', function(playerName, setKickReason, deferrals)
