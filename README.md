@@ -14,8 +14,13 @@ Before using this resource, make sure to obtain your Steam API key from [Steam C
 
 Adjust the `daysThreshold` variable to set the minimum age (in days) required for a Steam account to join your server.
 
-
 ```local daysThreshold = 15 -- Days old to check```
+
+### Webhook for discord logs
+
+Adjust the `webHook` variable to set it for discord logs.
+
+```local webHook = ""```
 
 ### Private profile check: 
 If the player has a private profile, allow them to join (true)
