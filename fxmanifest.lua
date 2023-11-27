@@ -5,4 +5,4 @@ description 'Crew System Loud Roleplay Chile'
 version '1.3.7'
 lua54 'yes'
 
-server_script 'spoof.lua'
+server_script 'playertrust.lua'
