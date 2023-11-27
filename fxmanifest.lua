@@ -1,0 +1,1 @@
+server_script 'blacklist_s.lua'
