@@ -1,24 +1,27 @@
-local apiKey = ""
-local daysThreshold = 15
+
+
+local apiKey = "YOUR_API_KEY" -- Steam api key https://steamcommunity.com/dev
+local daysThreshold = 15 -- Days to check
 
 AddEventHandler('playerConnecting', function(playerName, setKickReason, deferrals)
     deferrals.defer()
-    deferrals.update(string.format("Hola %s. Estamos checkeandote!.", playerName))
+    deferrals.update(string.format("Hi %s We are checking you!.", playerName))
     local identifiers = GetPlayerIdentifiers(source)
     local steamID64 = QuitarSteam(identifiers[1])
     local steam64 = hexToSteamID64(steamID64)
 
+
     if not steam64 then
-        deferrals.done("⚠️|  No encontré tu steam, asegurate de abrirlo antes de entrar al servidor❤️")
-    else
-        checkSteamAccountCreationDate(steam64, function(puede)
-            if puede then
-                deferrals.done("⚠️ Tu steam no tiene suficiente tiempo de creado.")
-            else
-                deferrals.done()
-            end
-        end)
+        deferrals.done("⚠️|  You need to have steam open to play on this server. ")
     end
+
+    checkSteamAccountCreationDate(steam64, function(puede)
+        if puede then
+            deferrals.done("⚠️ Your account must be at least "..daysThreshold.." days old to play on this server.")
+        else
+            deferrals.done()
+        end
+    end)
 end)
 
 function checkSteamAccountCreationDate(steamId64, callback)
@@ -28,25 +31,26 @@ function checkSteamAccountCreationDate(steamId64, callback)
         if statusCode == 200 then
             local data = json.decode(response)
 
-            if data and data.response and data.response.players and data.response.players[1] and data.response.players[1].communityvisibilitystate == 3 then
+            if data and data.response and data.response.players and data.response.players[1] and data.response.players[1].communityvisibilitystate ~= 1 then
                 local accountCreated = tonumber(data.response.players[1].timecreated)
                 local currentTime = os.time()
                 local daysSinceCreation = (currentTime - accountCreated) / (24 * 60 * 60)
                 local accountName = data.response.players[1].personaname
 
                 if daysSinceCreation < daysThreshold then
-                    Log("La cuenta de Steam '**" .. accountName .. "** tiene menos de 15 días de antigüedad.\n Tiene " .. daysSinceCreation .. " días desde su creación.")
+                    Log("The Steam account '**" .. accountName .. "**' is less than " .. daysThreshold .. " days old.\nIt has been " .. daysSinceCreation .. " days since its creation.")
                     callback(true)
                 else
-                    --Log("La cuenta de Steam '**" .. accountName .. "** tiene más de 15 días de antigüedad.\n Tiene " .. daysSinceCreation .. " días desde su creación.")
                     callback(false)
                 end
             else
-                callback(false)
-                print("No se pudo obtener información de la cuenta de Steam con ID64 " .. steamId64.. " O el perfil es privado")
+                print("Failed to retrieve Steam account information with ID64 " .. steamId64 .. " or the profile is private.")
+                -- If the player has a private profile, allow them to join (true)
+                -- If you want to block the connection, set it to false
+                callback(true) -- Change this
             end
         else
-            print("Error al hacer la solicitud a la API de Steam. Código de estado: " .. statusCode)
+            print("Error making request to the Steam API. Status code: " .. statusCode)
         end
     end, "GET", "", { ["Content-Type"] = "application/json" })
 end
@@ -61,8 +65,8 @@ function hexToSteamID64(hex)
 end
 
 function Log(message)
-    title = "ANTI WEONE | Conexion Bloqueada"
-    local webHook = 'https://discord.com/api/webhooks/1178501785795706910/mE8LrHGPZ6RiLBXJFKb0BEQDN3XLaDqYgpx2gmaKrwMVA6PNqxCZ0VGzurYfcWHyWo5E'
+    title = "Loud | Player Trust System"
+    local webHook = ""
     local embedData = {{
         ['title'] = title,
         ['footer'] = {
@@ -71,7 +75,7 @@ function Log(message)
         },
         ['description'] = message,
         ['author'] = {
-            ['name'] = "Loud RP",
+            ['name'] = "Loud",
             ['icon_url'] = "https://cdn.discordapp.com/attachments/1138360597256355911/1141890710879080488/88127058.png"
         }
     }}
